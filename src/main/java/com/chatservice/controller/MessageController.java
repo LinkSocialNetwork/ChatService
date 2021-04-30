@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping
 public class MessageController {
 
     private List<String> currentOnline = new ArrayList<>();
