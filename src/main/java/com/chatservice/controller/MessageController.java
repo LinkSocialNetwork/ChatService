@@ -1,6 +1,7 @@
 package com.chatservice.controller;
 
 import com.chatservice.model.ChatMessage;
+import com.chatservice.model.UserWithImg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -15,7 +16,7 @@ import java.util.List;
 @RestController
 public class MessageController {
 
-    private List<String> currentOnline = new ArrayList<>();
+    private List<UserWithImg> currentOnline = new ArrayList<>();
     private List<ChatMessage> currentMessages = new ArrayList<>();
 
 
@@ -46,30 +47,33 @@ public class MessageController {
 
     @MessageMapping("/onlineUsers")
     @SendTo("/topic/status")
-    public String sendOnlineUsers(String incomingUser) throws Exception {
+    public String sendOnlineUsers(UserWithImg incomingUser) throws Exception {
         for(int i = 0; i < currentOnline.size(); i++) {
-            if(incomingUser.equals(currentOnline.get(i))){
+            if(incomingUser.getUserName().equals(currentOnline.get(i).getUserName())){
 //                loggy.info("Sent back information on currently online Users");
-                return currentOnline.toString();
+                return userWithImgToJSON(currentOnline);
             }
         }
         currentOnline.add(incomingUser);
 //        loggy.info("Sent back information on currently online Users and added new User:"+incomingUser);
-        return currentOnline.toString();
+        return userWithImgToJSON(currentOnline);
     }
 
     @MessageMapping("/disconnect")
     @SendTo("/topic/status")
     public String disconnectUser(String leavingUser) throws Exception {
         System.out.println("in disconnect");
+        String user = leavingUser.substring(1, leavingUser.length()-1);
+        System.out.println(user);
         for(int i = 0; i < currentOnline.size(); i++) {
-            if(leavingUser.equals(currentOnline.get(i))){
+            System.out.println(currentOnline.get(i).getUserName());
+            if(user.equals(currentOnline.get(i).getUserName())){
                 currentOnline.remove(i);
                 System.out.println("user disconnected");
             }
         }
 //        loggy.info("disconnected user:"+leavingUser+" from chatroom");
-        return currentOnline.toString();
+        return userWithImgToJSON(currentOnline);
     }
 
     @MessageMapping("/loadMessages")
@@ -92,13 +96,25 @@ public class MessageController {
     public String arrayListToJSON(List<ChatMessage> currentMessages) {
         String newList = "[";
         for(int i=0; i< currentMessages.size(); i++) {
-            newList += ("{\"sender\":\"" + currentMessages.get(i).getSender() + "\",\"text\":\"" + currentMessages.get(i).getText() + "\",\"time\":\"" + currentMessages.get(i).getTime() +"\"}");
+            newList += ("{\"sender\":\"" + currentMessages.get(i).getSender() + "\",\"text\":\"" + currentMessages.get(i).getText() + "\",\"time\":\"" + currentMessages.get(i).getTime() + "\",\"imgUrl\":\"" + currentMessages.get(i).getImgUrl() +"\"}");
             if(!(i == currentMessages.size()-1)){
                 newList += ",";
             }
         }
         newList += "]";
         System.out.println(newList);
+        return newList;
+    }
+
+    public String userWithImgToJSON(List<UserWithImg> currentOnline) {
+        String newList = "[";
+        for(int i=0; i<currentOnline.size(); i++) {
+            newList += ("{\"userName\":\"" + currentOnline.get(i).getUserName() + "\",\"imgUrl\":\"" + currentOnline.get(i).getImgUrl() +"\"}");
+            if(!(i == currentOnline.size()-1)){
+                newList += ",";
+            }
+        }
+        newList += "]";
         return newList;
     }
 }
