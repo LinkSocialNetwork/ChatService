@@ -18,15 +18,7 @@ public class MessageController {
 
     private List<UserWithImg> currentOnline = new ArrayList<>();
     private List<ChatMessage> currentMessages = new ArrayList<>();
-
-
-
-
-    //    final static Logger loggy = Logger.getLogger(UserController.class);
-//    static {
-////        loggy.setLevel(Level.ALL);
-//        //loggy.setLevel(Level.ERROR);
-//    }
+    private List<String> currentTyping = new ArrayList<>();
 
     /**
      * Chat message websocket endpoint for passing messages to and from the client.
@@ -81,6 +73,31 @@ public class MessageController {
     public String sendOldMessages(String str) throws Exception {
         System.out.println("Sending older messages");
         return arrayListToJSON(currentMessages);
+    }
+
+    @MessageMapping("/typing")
+    @SendTo("/topic/typing")
+    public String newTyping(String username) throws Exception {
+        System.out.println("new user typing");
+        for(int i = 0; i<currentTyping.size(); i++){
+            if(currentTyping.get(i).equals(username)) {
+                return currentTyping.toString();
+            }
+        }
+        currentTyping.add(username);
+        return currentTyping.toString();
+    }
+
+    @MessageMapping("/notTyping")
+    @SendTo("/topic/typing")
+    public String removeTyping(String username) throws Exception {
+        System.out.println("User no longer typing");
+        for(int i = 0; i<currentTyping.size(); i++){
+            if(currentTyping.get(i).equals(username)) {
+                currentTyping.remove(i);
+            }
+        }
+        return currentTyping.toString();
     }
 
     public void addToCurrentMessages(ChatMessage msg) {
