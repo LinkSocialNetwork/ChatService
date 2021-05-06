@@ -41,6 +41,7 @@ public class MessageController {
     public ChatMessage send(ChatMessage msg) throws Exception {
         String time = new SimpleDateFormat("HH:mm").format(new Date());
         System.out.println(msg);
+        System.out.println("hello");
         ChatMessage newMsg = new ChatMessage(msg.getSender(), msg.getText(), time, msg.getImgUrl());
         addToCurrentMessages(newMsg);
 //        loggy.info("Sending the message to the chat room");
