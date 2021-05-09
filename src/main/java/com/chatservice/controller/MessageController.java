@@ -40,11 +40,8 @@ public class MessageController {
     @SendTo("/topic/messages")
     public ChatMessage send(ChatMessage msg) throws Exception {
         String time = new SimpleDateFormat("HH:mm").format(new Date());
-        System.out.println(msg);
-        System.out.println("hello");
         ChatMessage newMsg = new ChatMessage(msg.getSender(), msg.getText(), time, msg.getImgUrl());
         addToCurrentMessages(newMsg);
-//        loggy.info("Sending the message to the chat room");
         return newMsg;
     }
 
@@ -59,12 +56,10 @@ public class MessageController {
     public String sendOnlineUsers(UserWithImg incomingUser) throws Exception {
         for(int i = 0; i < currentOnline.size(); i++) {
             if(incomingUser.getUserName().equals(currentOnline.get(i).getUserName())){
-//                loggy.info("Sent back information on currently online Users");
                 return userWithImgToJSON(currentOnline);
             }
         }
         currentOnline.add(incomingUser);
-//        loggy.info("Sent back information on currently online Users and added new User:"+incomingUser);
         return userWithImgToJSON(currentOnline);
     }
 
@@ -78,17 +73,12 @@ public class MessageController {
     @MessageMapping("/disconnect")
     @SendTo("/topic/status")
     public String disconnectUser(String leavingUser) throws Exception {
-        System.out.println("in disconnect");
         String user = leavingUser.substring(1, leavingUser.length()-1);
-        System.out.println(user);
         for(int i = 0; i < currentOnline.size(); i++) {
-            System.out.println(currentOnline.get(i).getUserName());
             if(user.equals(currentOnline.get(i).getUserName())){
                 currentOnline.remove(i);
-                System.out.println("user disconnected");
             }
         }
-//        loggy.info("disconnected user:"+leavingUser+" from chatroom");
         return userWithImgToJSON(currentOnline);
     }
 
@@ -102,7 +92,6 @@ public class MessageController {
     @MessageMapping("/loadMessages")
     @SendTo("/topic/loadMessages")
     public String sendOldMessages(String str) throws Exception {
-        System.out.println("Sending older messages");
         return arrayListToJSON(currentMessages);
     }
 
@@ -116,7 +105,6 @@ public class MessageController {
     @MessageMapping("/typing")
     @SendTo("/topic/typing")
     public String newTyping(String username) throws Exception {
-        System.out.println("new user typing");
         for(int i = 0; i<currentTyping.size(); i++){
             if(currentTyping.get(i).equals(username)) {
                 return currentTyping.toString();
@@ -136,7 +124,6 @@ public class MessageController {
     @MessageMapping("/notTyping")
     @SendTo("/topic/typing")
     public String removeTyping(String username) throws Exception {
-        System.out.println("User no longer typing");
         for(int i = 0; i<currentTyping.size(); i++){
             if(currentTyping.get(i).equals(username)) {
                 currentTyping.remove(i);
@@ -174,7 +161,6 @@ public class MessageController {
             }
         }
         newList += "]";
-        System.out.println(newList);
         return newList;
     }
 
@@ -186,7 +172,7 @@ public class MessageController {
     public String userWithImgToJSON(List<UserWithImg> currentOnline) {
         String newList = "[";
         for(int i=0; i<currentOnline.size(); i++) {
-            newList += ("{\"userName\":\"" + currentOnline.get(i).getUserName() + "\",\"imgUrl\":\"" + currentOnline.get(i).getImgUrl() +"\"}");
+            newList += ("{\"userName\":\"" + currentOnline.get(i).getUserName() + "\",\"userID\":\"" + currentOnline.get(i).getUserID() +"\""+",\"imgUrl\":\"" + currentOnline.get(i).getImgUrl() +"\"}");
             if(!(i == currentOnline.size()-1)){
                 newList += ",";
             }

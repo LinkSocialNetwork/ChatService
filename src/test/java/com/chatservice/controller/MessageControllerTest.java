@@ -54,7 +54,7 @@ class MessageControllerTest {
     @Test
     void sendOnlineUsers() throws Exception{
         //arrange
-        UserWithImg input = new UserWithImg("user", "profile.png");
+        UserWithImg input = new UserWithImg("user", "profile.png",1);
         List<UserWithImg> list = new ArrayList<>();
         list.add(input);
         String expected = controller.userWithImgToJSON(list);
@@ -167,8 +167,8 @@ class MessageControllerTest {
     void userWithImgToJSON() {
         //arrange
         List<UserWithImg> input = new ArrayList<>();
-        input.add(new UserWithImg("user", "profile.png"));
-        String expected = "[{\"userName\":\"user\",\"imgUrl\":\"profile.png\"}]";
+        input.add(new UserWithImg("user", "profile.png",1));
+        String expected = "[{\"userName\":\"user\",\"userID\":\"1\",\"imgUrl\":\"profile.png\"}]";
 
         //act
         String actual = controller.userWithImgToJSON(input);
