@@ -172,7 +172,7 @@ public class MessageController {
     public String userWithImgToJSON(List<UserWithImg> currentOnline) {
         String newList = "[";
         for(int i=0; i<currentOnline.size(); i++) {
-            newList += ("{\"userName\":\"" + currentOnline.get(i).getUserName() + "\",\"imgUrl\":\"" + currentOnline.get(i).getImgUrl() +"\"}");
+            newList += ("{\"userName\":\"" + currentOnline.get(i).getUserName() + "\",\"userID\":\"" + currentOnline.get(i).getUserID() +"\""+",\"imgUrl\":\"" + currentOnline.get(i).getImgUrl() +"\"}");
             if(!(i == currentOnline.size()-1)){
                 newList += ",";
             }

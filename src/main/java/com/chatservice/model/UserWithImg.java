@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class UserWithImg {
     private String userName;
     private String imgUrl;
+    private int userID;
 }
